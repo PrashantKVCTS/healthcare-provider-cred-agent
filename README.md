@@ -117,6 +117,7 @@ provider_cred_agent/
 │   ├── sample_provider_roster.json # Multi-scenario test roster (JSON)
 │   └── subscriptions.json          # Persistent subscription store
 ├── docs/
+│   ├── BLUEPRINT_REQUIREMENTS_DOCUMENT.md # Functional Requirements Specification & Blueprint
 │   ├── LOCAL_SETUP_AND_RUN_GUIDE.md      # Local setup, VS Code, CLI, and Docker guide
 │   ├── TECHNICAL_DESIGN_DOCUMENT.md      # Full Technical Design Document (TDD)
 │   ├── CLOUD_PRODUCTION_DEPLOYMENT_GUIDE.md # Production GCP deployment & HIPAA guide
@@ -191,6 +192,7 @@ For detailed instructions, refer to the [Appian Integration Guide](appian/appian
 
 ## 📖 Technical Documentation
 
+* **[Blueprint & Requirements Document (FRS)](docs/BLUEPRINT_REQUIREMENTS_DOCUMENT.md)**: Comprehensive business blueprint, functional requirements (FR-1 to FR-8), NFRs, traceability matrix, and Appian process blueprint.
 * **[Local Project Setup & Run Guide](docs/LOCAL_SETUP_AND_RUN_GUIDE.md)**: Turnkey local setup, VS Code 1-click execution, CLI commands, Docker Compose, and troubleshooting recipes.
 * **[Technical Design Document (TDD)](docs/TECHNICAL_DESIGN_DOCUMENT.md)**: Full architecture specification, NCQA/CMS compliance rules, database/CDT schemas, HMAC security, and sequence diagrams.
 * **[Cloud Production Deployment Guide (GCP)](docs/CLOUD_PRODUCTION_DEPLOYMENT_GUIDE.md)**: Step-by-step production deployment to Google Cloud Platform (Cloud Run, HIPAA compliance, Secret Manager, Cloud Armor WAF, CI/CD, and Appian Cloud connectivity).
