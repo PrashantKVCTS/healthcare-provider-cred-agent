@@ -1,0 +1,6 @@
+npi,first_name,last_name,caqh_id,tin,group_name,specialty,practice_state,requested_products
+1234567893,Sarah,Conner,14892011,74-8899123,Austin Family Health Partners,Family Medicine,TX,"Commercial HMO,Commercial PPO,Medicare Advantage,Medicaid"
+1987654321,Robert,Chen,15983022,75-1122334,Dallas Internal Medicine Specialists,Internal Medicine,TX,"Commercial HMO,Commercial PPO,Medicare Advantage,Medicaid"
+1457896325,Emily,Watson,16744033,59-9944112,Biscayne Orthopedics Group,Orthopedic Surgery,FL,"Commercial HMO,Commercial PPO,Medicare Advantage"
+1122334455,Marcus,Vance,11229988,74-3322119,Vance Heart Center,Cardiology,TX,"Commercial HMO,Medicare Advantage,Medicaid"
+1679543218,Elizabeth,Bennett,18829910,94-5544332,Bay Area Childrens Clinic,Pediatrics,CA,"Commercial HMO,Commercial PPO,Medicaid"

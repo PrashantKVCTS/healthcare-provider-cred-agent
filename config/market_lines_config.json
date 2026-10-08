@@ -1,0 +1,106 @@
+{
+  "market_lines": [
+    {
+      "market_line_id": "COMMERCIAL",
+      "market_line_name": "Commercial",
+      "default_term_months": 36,
+      "requires_board_cert": false,
+      "requires_active_dea": true,
+      "min_malpractice_per_claim": 1000000,
+      "min_malpractice_aggregate": 3000000,
+      "allowed_specialties": ["ALL"],
+      "products": [
+        {
+          "product_code": "COMM_HMO_01",
+          "product_name": "Commercial HMO Premier",
+          "network_tier": "Tier 1 - In-Network",
+          "eligible_states": ["TX", "CA", "FL", "NY", "IL", "GA", "OH", "PA"]
+        },
+        {
+          "product_code": "COMM_PPO_01",
+          "product_name": "Commercial Preferred PPO",
+          "network_tier": "Tier 1 - Preferred",
+          "eligible_states": ["TX", "CA", "FL", "NY", "IL", "GA", "OH", "PA", "NC", "VA"]
+        },
+        {
+          "product_code": "COMM_EPO_01",
+          "product_name": "Commercial Select EPO",
+          "network_tier": "Tier 2 - Broad Network",
+          "eligible_states": ["TX", "CA", "FL", "NY", "IL"]
+        }
+      ]
+    },
+    {
+      "market_line_id": "MEDICARE_ADVANTAGE",
+      "market_line_name": "Medicare Advantage",
+      "default_term_months": 36,
+      "requires_board_cert": true,
+      "requires_active_dea": true,
+      "min_malpractice_per_claim": 1000000,
+      "min_malpractice_aggregate": 3000000,
+      "allowed_specialties": ["Internal Medicine", "Family Medicine", "Cardiology", "Orthopedic Surgery", "Geriatrics", "General Practice", "Pediatrics", "Neurology", "Psychiatry"],
+      "products": [
+        {
+          "product_code": "MA_HMO_01",
+          "product_name": "Medicare Advantage Choice HMO",
+          "network_tier": "Tier 1 - Senior Care",
+          "eligible_states": ["TX", "FL", "CA", "NY", "PA", "OH"]
+        },
+        {
+          "product_code": "MA_PPO_01",
+          "product_name": "Medicare Advantage Freedom PPO",
+          "network_tier": "Tier 1 - Senior Preferred",
+          "eligible_states": ["TX", "FL", "CA", "NY", "PA", "OH", "IL", "GA"]
+        },
+        {
+          "product_code": "MA_DSNP_01",
+          "product_name": "Dual-Eligible Special Needs Plan (D-SNP)",
+          "network_tier": "Tier 1 - Complex Care",
+          "eligible_states": ["TX", "FL", "CA", "NY"]
+        }
+      ]
+    },
+    {
+      "market_line_id": "MEDICAID",
+      "market_line_name": "Medicaid Managed Care",
+      "default_term_months": 36,
+      "requires_board_cert": false,
+      "requires_active_dea": true,
+      "min_malpractice_per_claim": 1000000,
+      "min_malpractice_aggregate": 3000000,
+      "allowed_specialties": ["ALL"],
+      "products": [
+        {
+          "product_code": "MCD_STAR_01",
+          "product_name": "Medicaid STAR Managed Care",
+          "network_tier": "Community In-Network",
+          "eligible_states": ["TX", "CA", "FL", "NY", "IL", "OH"]
+        },
+        {
+          "product_code": "MCD_CHIP_01",
+          "product_name": "Children's Health Insurance Program (CHIP)",
+          "network_tier": "Pediatric Network",
+          "eligible_states": ["TX", "CA", "FL", "NY", "IL", "OH"]
+        }
+      ]
+    },
+    {
+      "market_line_id": "EXCHANGE_ACA",
+      "market_line_name": "ACA Marketplace Exchange",
+      "default_term_months": 36,
+      "requires_board_cert": false,
+      "requires_active_dea": true,
+      "min_malpractice_per_claim": 1000000,
+      "min_malpractice_aggregate": 3000000,
+      "allowed_specialties": ["ALL"],
+      "products": [
+        {
+          "product_code": "ACA_IND_01",
+          "product_name": "Individual & Family Essential Health Plans",
+          "network_tier": "Tier 1 - Standard Marketplace",
+          "eligible_states": ["TX", "CA", "FL", "NY", "IL", "GA"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  cred-agent-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cred-agent-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - PYTHONUNBUFFERED=1
+      - ENVIRONMENT=production
+    volumes:
+      - subscriptions-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  cred-agent-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cred-agent-ui
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    command: ["streamlit", "run", "ui/app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    depends_on:
+      cred-agent-api:
+        condition: service_healthy
+    volumes:
+      - subscriptions-data:/app/data
+
+volumes:
+  subscriptions-data:
+    driver: local

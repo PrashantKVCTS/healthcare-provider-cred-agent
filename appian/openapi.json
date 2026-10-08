@@ -1,0 +1,1914 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Appian Provider Credentialing Approval Agent API",
+    "description": "Enterprise Credentialing Approval and Event Subscription API for Healthcare Provider Management Systems (PMS). Performs Primary Source Verification (NPI & CAQH ProView), captures clinical credentials (education, work history, state licenses, DEA, board certifications), evaluates business market lines with products/dates, and publishes event webhooks for Appian Process Automation.",
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Appian Health & System"
+        ],
+        "summary": "Health Check",
+        "description": "Health check endpoint for Appian Connected System connection verification.",
+        "operationId": "health_check_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/market-lines": {
+      "get": {
+        "tags": [
+          "Market Lines & Rules"
+        ],
+        "summary": "Get Market Lines",
+        "description": "Returns the business-approved market lines, product codes, network tiers, and rules.",
+        "operationId": "get_market_lines_api_v1_market_lines_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/provider/credential": {
+      "post": {
+        "tags": [
+          "Appian Credentialing Automation"
+        ],
+        "summary": "Credential Single Provider (On-Demand / Record Action)",
+        "description": "Called by Appian Integration Object or Process Model to credential a single provider on-demand.\nValidates NPI and CAQH ProView, gathers market lines, captures education/work history/licenses,\nand returns full decision docket.",
+        "operationId": "credential_single_provider_api_v1_provider_credential_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SingleProviderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderCredentialingResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/roster/process": {
+      "post": {
+        "tags": [
+          "Appian Credentialing Automation"
+        ],
+        "summary": "Process Provider Roster File (Batch / Ingestion)",
+        "description": "Called by Appian Process Model when a provider roster file (CSV) is uploaded in Appian.\nParses roster records, executes agentic validation for each provider, and returns batch stats.",
+        "operationId": "process_roster_file_api_v1_roster_process_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_process_roster_file_api_v1_roster_process_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchRosterResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/roster/process-base64": {
+      "post": {
+        "tags": [
+          "Appian Credentialing Automation"
+        ],
+        "summary": "Process Roster via Base64 (Appian Document Integration)",
+        "description": "Called by Appian Integration Object passing a document converted to Base64\nvia Appian's documentToBase64() or smart service.",
+        "operationId": "process_roster_base64_api_v1_roster_process_base64_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RosterBase64Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchRosterResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/roster/process-json": {
+      "post": {
+        "tags": [
+          "Appian Credentialing Automation"
+        ],
+        "summary": "Process Provider Roster JSON (Appian Process Variables)",
+        "description": "Called by Appian Process Model passing an array of CDT records directly as JSON payload.",
+        "operationId": "process_roster_json_api_v1_roster_process_json_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": {
+                  "$ref": "#/components/schemas/SingleProviderRequest"
+                },
+                "type": "array",
+                "title": "Providers"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchRosterResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions": {
+      "get": {
+        "tags": [
+          "Agent Credentialing Service Subscriptions"
+        ],
+        "summary": "List All Webhook Subscriptions",
+        "description": "Retrieve all registered subscriptions and their delivery health metrics.",
+        "operationId": "list_subscriptions_api_v1_subscriptions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SubscriptionModel"
+                  },
+                  "type": "array",
+                  "title": "Response List Subscriptions Api V1 Subscriptions Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Agent Credentialing Service Subscriptions"
+        ],
+        "summary": "Register Webhook Subscription for Appian Events",
+        "description": "Register Appian Web API or external consumer to receive real-time webhook notifications\nfor credentialing events (e.g. BATCH_COMPLETED, CREDENTIALING_COMPLETED, RECREDENTIALING_ALERT,\nCAQH_EXPIRATION_ALERT, SANCTION_DETECTED).",
+        "operationId": "create_subscription_api_v1_subscriptions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions/{subscription_id}": {
+      "get": {
+        "tags": [
+          "Agent Credentialing Service Subscriptions"
+        ],
+        "summary": "Get Subscription Details",
+        "description": "Get metadata and telemetry for a specific subscription.",
+        "operationId": "get_subscription_api_v1_subscriptions__subscription_id__get",
+        "parameters": [
+          {
+            "name": "subscription_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique Subscription ID",
+              "title": "Subscription Id"
+            },
+            "description": "Unique Subscription ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Agent Credentialing Service Subscriptions"
+        ],
+        "summary": "Update Subscription Status or Target URL",
+        "description": "Pause, resume, or update the target webhook URL for a subscription.",
+        "operationId": "update_subscription_api_v1_subscriptions__subscription_id__put",
+        "parameters": [
+          {
+            "name": "subscription_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique Subscription ID",
+              "title": "Subscription Id"
+            },
+            "description": "Unique Subscription ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Agent Credentialing Service Subscriptions"
+        ],
+        "summary": "Cancel Webhook Subscription",
+        "description": "De-register an Appian webhook subscription.",
+        "operationId": "delete_subscription_api_v1_subscriptions__subscription_id__delete",
+        "parameters": [
+          {
+            "name": "subscription_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique Subscription ID",
+              "title": "Subscription Id"
+            },
+            "description": "Unique Subscription ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions/{subscription_id}/test": {
+      "post": {
+        "tags": [
+          "Agent Credentialing Service Subscriptions"
+        ],
+        "summary": "Send Test Ping / Verification Webhook",
+        "description": "Dispatches a mock event payload to the registered webhook URL to verify network connectivity,\nAppian authentication, and HMAC signature validation.",
+        "operationId": "test_subscription_webhook_api_v1_subscriptions__subscription_id__test_post",
+        "parameters": [
+          {
+            "name": "subscription_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Unique Subscription ID",
+              "title": "Subscription Id"
+            },
+            "description": "Unique Subscription ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestWebhookRequest",
+                "default": {
+                  "event_type": "CREDENTIALING_COMPLETED"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions/scan-alerts": {
+      "post": {
+        "tags": [
+          "Agent Credentialing Service Subscriptions"
+        ],
+        "summary": "Trigger Continuous Monitoring Alert Scan",
+        "description": "Scans provider network for upcoming 90-day NCQA recredentialing deadlines,\nexpiring CAQH attestations (> 90 days), and sanction flags.\nAutomatically dispatches webhooks to all subscribed Appian callback endpoints.",
+        "operationId": "trigger_alert_scan_api_v1_subscriptions_scan_alerts_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertScanResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/appian/openapi.json": {
+      "get": {
+        "tags": [
+          "Appian Setup"
+        ],
+        "summary": "Get Appian Openapi",
+        "description": "Returns OpenAPI schema for 1-click import into Appian Integration Designer.",
+        "operationId": "get_appian_openapi_api_v1_appian_openapi_json_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlertScanResponse": {
+        "properties": {
+          "scan_timestamp": {
+            "type": "string",
+            "title": "Scan Timestamp"
+          },
+          "providers_evaluated": {
+            "type": "integer",
+            "title": "Providers Evaluated"
+          },
+          "recred_alerts_dispatched": {
+            "type": "integer",
+            "title": "Recred Alerts Dispatched"
+          },
+          "caqh_alerts_dispatched": {
+            "type": "integer",
+            "title": "Caqh Alerts Dispatched"
+          },
+          "sanction_alerts_dispatched": {
+            "type": "integer",
+            "title": "Sanction Alerts Dispatched"
+          },
+          "total_notifications_sent": {
+            "type": "integer",
+            "title": "Total Notifications Sent"
+          },
+          "details": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "providers_evaluated",
+          "recred_alerts_dispatched",
+          "caqh_alerts_dispatched",
+          "sanction_alerts_dispatched",
+          "total_notifications_sent"
+        ],
+        "title": "AlertScanResponse"
+      },
+      "BatchRosterResult": {
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "title": "Batch Id"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename",
+            "default": "roster.csv"
+          },
+          "processed_at": {
+            "type": "string",
+            "title": "Processed At"
+          },
+          "total_providers": {
+            "type": "integer",
+            "title": "Total Providers",
+            "default": 0
+          },
+          "approved_count": {
+            "type": "integer",
+            "title": "Approved Count",
+            "default": 0
+          },
+          "conditional_count": {
+            "type": "integer",
+            "title": "Conditional Count",
+            "default": 0
+          },
+          "committee_review_count": {
+            "type": "integer",
+            "title": "Committee Review Count",
+            "default": 0
+          },
+          "denied_count": {
+            "type": "integer",
+            "title": "Denied Count",
+            "default": 0
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderCredentialingResult"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "batch_id"
+        ],
+        "title": "BatchRosterResult"
+      },
+      "BoardCertification": {
+        "properties": {
+          "specialty": {
+            "type": "string",
+            "title": "Specialty"
+          },
+          "board_name": {
+            "type": "string",
+            "title": "Board Name"
+          },
+          "certified_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Certified Date"
+          },
+          "recertified_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recertified Date"
+          },
+          "expiration_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiration Date"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "specialty",
+          "board_name"
+        ],
+        "title": "BoardCertification"
+      },
+      "Body_process_roster_file_api_v1_roster_process_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_process_roster_file_api_v1_roster_process_post"
+      },
+      "CAQHProfile": {
+        "properties": {
+          "caqh_id": {
+            "type": "string",
+            "title": "Caqh Id"
+          },
+          "npi": {
+            "type": "string",
+            "title": "Npi"
+          },
+          "attestation_date": {
+            "type": "string",
+            "title": "Attestation Date"
+          },
+          "is_attestation_current": {
+            "type": "boolean",
+            "title": "Is Attestation Current",
+            "default": true
+          },
+          "days_since_attestation": {
+            "type": "integer",
+            "title": "Days Since Attestation",
+            "default": 25
+          },
+          "education": {
+            "items": {
+              "$ref": "#/components/schemas/EducationRecord"
+            },
+            "type": "array",
+            "title": "Education"
+          },
+          "work_history": {
+            "items": {
+              "$ref": "#/components/schemas/WorkHistoryItem"
+            },
+            "type": "array",
+            "title": "Work History"
+          },
+          "licenses": {
+            "items": {
+              "$ref": "#/components/schemas/StateLicense"
+            },
+            "type": "array",
+            "title": "Licenses"
+          },
+          "specialties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Specialties"
+          },
+          "board_certifications": {
+            "items": {
+              "$ref": "#/components/schemas/BoardCertification"
+            },
+            "type": "array",
+            "title": "Board Certifications"
+          },
+          "dea_records": {
+            "items": {
+              "$ref": "#/components/schemas/DEARecord"
+            },
+            "type": "array",
+            "title": "Dea Records"
+          },
+          "malpractice": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MalpracticePolicy"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sanction_history": {
+            "type": "boolean",
+            "title": "Sanction History",
+            "default": false
+          },
+          "disclosure_adverse_actions": {
+            "type": "boolean",
+            "title": "Disclosure Adverse Actions",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "caqh_id",
+          "npi",
+          "attestation_date"
+        ],
+        "title": "CAQHProfile"
+      },
+      "CredentialingAuditTrail": {
+        "properties": {
+          "step_name": {
+            "type": "string",
+            "title": "Step Name"
+          },
+          "agent_name": {
+            "type": "string",
+            "title": "Agent Name"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp"
+          },
+          "action_taken": {
+            "type": "string",
+            "title": "Action Taken"
+          },
+          "details": {
+            "type": "string",
+            "title": "Details"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "SUCCESS"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step_name",
+          "agent_name",
+          "action_taken",
+          "details"
+        ],
+        "title": "CredentialingAuditTrail"
+      },
+      "CredentialingDecision": {
+        "type": "string",
+        "enum": [
+          "APPROVED",
+          "CONDITIONAL_APPROVAL",
+          "COMMITTEE_REVIEW_REQUIRED",
+          "DENIED"
+        ],
+        "title": "CredentialingDecision"
+      },
+      "DEARecord": {
+        "properties": {
+          "dea_number": {
+            "type": "string",
+            "title": "Dea Number"
+          },
+          "schedules": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Schedules"
+          },
+          "expiration_date": {
+            "type": "string",
+            "title": "Expiration Date"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "ACTIVE"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dea_number",
+          "expiration_date"
+        ],
+        "title": "DEARecord"
+      },
+      "EducationRecord": {
+        "properties": {
+          "degree": {
+            "type": "string",
+            "title": "Degree"
+          },
+          "institution": {
+            "type": "string",
+            "title": "Institution"
+          },
+          "graduation_year": {
+            "type": "integer",
+            "title": "Graduation Year"
+          },
+          "degree_type": {
+            "type": "string",
+            "title": "Degree Type",
+            "default": "Medical School"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "degree",
+          "institution",
+          "graduation_year"
+        ],
+        "title": "EducationRecord"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "service": {
+            "type": "string",
+            "title": "Service"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "connected_system_ready": {
+            "type": "boolean",
+            "title": "Connected System Ready"
+          },
+          "active_subscriptions": {
+            "type": "integer",
+            "title": "Active Subscriptions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "service",
+          "version",
+          "connected_system_ready",
+          "active_subscriptions"
+        ],
+        "title": "HealthResponse"
+      },
+      "MalpracticePolicy": {
+        "properties": {
+          "carrier": {
+            "type": "string",
+            "title": "Carrier"
+          },
+          "policy_number": {
+            "type": "string",
+            "title": "Policy Number"
+          },
+          "per_claim_limit": {
+            "type": "number",
+            "title": "Per Claim Limit",
+            "default": 1000000.0
+          },
+          "aggregate_limit": {
+            "type": "number",
+            "title": "Aggregate Limit",
+            "default": 3000000.0
+          },
+          "effective_date": {
+            "type": "string",
+            "title": "Effective Date"
+          },
+          "expiration_date": {
+            "type": "string",
+            "title": "Expiration Date"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "claims_past_5_years": {
+            "type": "integer",
+            "title": "Claims Past 5 Years",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "carrier",
+          "policy_number",
+          "effective_date",
+          "expiration_date"
+        ],
+        "title": "MalpracticePolicy"
+      },
+      "MarketProductApproval": {
+        "properties": {
+          "market_line": {
+            "type": "string",
+            "title": "Market Line"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "plan_code": {
+            "type": "string",
+            "title": "Plan Code"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "APPROVED"
+          },
+          "effective_date": {
+            "type": "string",
+            "title": "Effective Date"
+          },
+          "expiration_date": {
+            "type": "string",
+            "title": "Expiration Date"
+          },
+          "recred_due_date": {
+            "type": "string",
+            "title": "Recred Due Date"
+          },
+          "network_tier": {
+            "type": "string",
+            "title": "Network Tier",
+            "default": "Tier 1 - Preferred"
+          },
+          "specialty_scope": {
+            "type": "string",
+            "title": "Specialty Scope",
+            "default": "Primary Care"
+          },
+          "approval_reason": {
+            "type": "string",
+            "title": "Approval Reason",
+            "default": "Meets all NCQA PSV and business network requirements"
+          }
+        },
+        "type": "object",
+        "required": [
+          "market_line",
+          "product_name",
+          "plan_code",
+          "effective_date",
+          "expiration_date",
+          "recred_due_date"
+        ],
+        "title": "MarketProductApproval"
+      },
+      "NPIRecord": {
+        "properties": {
+          "npi": {
+            "type": "string",
+            "title": "Npi"
+          },
+          "enumeration_type": {
+            "type": "string",
+            "title": "Enumeration Type",
+            "default": "NPI-1"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "middle_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Middle Name",
+            "default": ""
+          },
+          "credential": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credential",
+            "default": "M.D."
+          },
+          "gender": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gender",
+            "default": "M"
+          },
+          "sole_proprietor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sole Proprietor",
+            "default": "NO"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "A"
+          },
+          "enumeration_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enumeration Date"
+          },
+          "last_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Updated"
+          },
+          "primary_taxonomy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Taxonomy"
+          },
+          "primary_specialty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Specialty"
+          },
+          "practice_address_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Practice Address State"
+          },
+          "practice_address_city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Practice Address City"
+          },
+          "practice_address_line1": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Practice Address Line1"
+          },
+          "practice_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Practice Phone"
+          },
+          "is_valid": {
+            "type": "boolean",
+            "title": "Is Valid",
+            "default": true
+          },
+          "deactivated": {
+            "type": "boolean",
+            "title": "Deactivated",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "npi",
+          "first_name",
+          "last_name"
+        ],
+        "title": "NPIRecord"
+      },
+      "PSVCheckItem": {
+        "properties": {
+          "check_name": {
+            "type": "string",
+            "title": "Check Name"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "details": {
+            "type": "string",
+            "title": "Details"
+          },
+          "verified_at": {
+            "type": "string",
+            "title": "Verified At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_name",
+          "source",
+          "status",
+          "details"
+        ],
+        "title": "PSVCheckItem"
+      },
+      "ProviderCredentialingResult": {
+        "properties": {
+          "npi": {
+            "type": "string",
+            "title": "Npi"
+          },
+          "provider_name": {
+            "type": "string",
+            "title": "Provider Name"
+          },
+          "caqh_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caqh Id"
+          },
+          "overall_decision": {
+            "$ref": "#/components/schemas/CredentialingDecision"
+          },
+          "decision_summary": {
+            "type": "string",
+            "title": "Decision Summary"
+          },
+          "decision_date": {
+            "type": "string",
+            "title": "Decision Date"
+          },
+          "recredentialing_due_date": {
+            "type": "string",
+            "title": "Recredentialing Due Date"
+          },
+          "committee_review_needed": {
+            "type": "boolean",
+            "title": "Committee Review Needed",
+            "default": false
+          },
+          "committee_flags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Committee Flags"
+          },
+          "psv_checks": {
+            "items": {
+              "$ref": "#/components/schemas/PSVCheckItem"
+            },
+            "type": "array",
+            "title": "Psv Checks"
+          },
+          "approved_market_lines": {
+            "items": {
+              "$ref": "#/components/schemas/MarketProductApproval"
+            },
+            "type": "array",
+            "title": "Approved Market Lines"
+          },
+          "rejected_market_lines": {
+            "items": {
+              "$ref": "#/components/schemas/MarketProductApproval"
+            },
+            "type": "array",
+            "title": "Rejected Market Lines"
+          },
+          "npi_profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NPIRecord"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "caqh_profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CAQHProfile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "education_summary": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Education Summary"
+          },
+          "work_history_summary": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Work History Summary"
+          },
+          "licenses_summary": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Licenses Summary"
+          },
+          "board_certifications": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Board Certifications"
+          },
+          "audit_trail": {
+            "items": {
+              "$ref": "#/components/schemas/CredentialingAuditTrail"
+            },
+            "type": "array",
+            "title": "Audit Trail"
+          },
+          "appian_case_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appian Case Id"
+          },
+          "ready_for_pdm_contracting": {
+            "type": "boolean",
+            "title": "Ready For Pdm Contracting",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "npi",
+          "provider_name",
+          "overall_decision",
+          "decision_summary",
+          "recredentialing_due_date"
+        ],
+        "title": "ProviderCredentialingResult"
+      },
+      "RosterBase64Request": {
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename",
+            "description": "Name of the uploaded roster file",
+            "default": "roster.csv",
+            "example": "network_provider_roster_q4.csv"
+          },
+          "base64_content": {
+            "type": "string",
+            "title": "Base64 Content",
+            "description": "Base64-encoded string of the CSV or JSON file from Appian a!document()"
+          }
+        },
+        "type": "object",
+        "required": [
+          "base64_content"
+        ],
+        "title": "RosterBase64Request"
+      },
+      "SingleProviderRequest": {
+        "properties": {
+          "npi": {
+            "type": "string",
+            "title": "Npi",
+            "description": "10-digit National Provider Identifier",
+            "example": "1234567893"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "description": "Provider legal first name",
+            "example": "Sarah"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "description": "Provider legal last name",
+            "example": "Conner"
+          },
+          "caqh_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caqh Id",
+            "description": "CAQH ProView ID",
+            "example": "14892011"
+          },
+          "tin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tin",
+            "description": "Tax ID / EIN",
+            "example": "74-8899123"
+          },
+          "group_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group Name",
+            "description": "Provider group practice",
+            "example": "Austin Family Health Partners"
+          },
+          "specialty": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specialty",
+            "description": "Specialty taxonomy description",
+            "default": "Family Medicine",
+            "example": "Family Medicine"
+          },
+          "practice_state": {
+            "type": "string",
+            "title": "Practice State",
+            "description": "Practicing location state code",
+            "default": "TX",
+            "example": "TX"
+          },
+          "requested_products": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Requested Products",
+            "description": "Lines of business and products requested for participation"
+          },
+          "appian_case_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appian Case Id",
+            "description": "Appian Case/Process ID",
+            "example": "APP-CRED-2026-001"
+          }
+        },
+        "type": "object",
+        "required": [
+          "npi",
+          "first_name",
+          "last_name"
+        ],
+        "title": "SingleProviderRequest"
+      },
+      "StateLicense": {
+        "properties": {
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "license_number": {
+            "type": "string",
+            "title": "License Number"
+          },
+          "license_type": {
+            "type": "string",
+            "title": "License Type",
+            "default": "MD"
+          },
+          "issue_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issue Date"
+          },
+          "expiration_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiration Date"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "ACTIVE"
+          },
+          "has_disciplinary_action": {
+            "type": "boolean",
+            "title": "Has Disciplinary Action",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "state",
+          "license_number"
+        ],
+        "title": "StateLicense"
+      },
+      "SubscriptionEventType": {
+        "type": "string",
+        "enum": [
+          "*",
+          "BATCH_COMPLETED",
+          "CREDENTIALING_COMPLETED",
+          "RECREDENTIALING_ALERT",
+          "CAQH_EXPIRATION_ALERT",
+          "SANCTION_DETECTED"
+        ],
+        "title": "SubscriptionEventType"
+      },
+      "SubscriptionModel": {
+        "properties": {
+          "subscription_id": {
+            "type": "string",
+            "title": "Subscription Id"
+          },
+          "client_name": {
+            "type": "string",
+            "title": "Client Name"
+          },
+          "webhook_url": {
+            "type": "string",
+            "title": "Webhook Url"
+          },
+          "subscribed_events": {
+            "items": {
+              "$ref": "#/components/schemas/SubscriptionEventType"
+            },
+            "type": "array",
+            "title": "Subscribed Events"
+          },
+          "auth_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Token"
+          },
+          "secret_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secret Key"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "last_notified_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Notified At"
+          },
+          "successful_deliveries": {
+            "type": "integer",
+            "title": "Successful Deliveries",
+            "default": 0
+          },
+          "failed_deliveries": {
+            "type": "integer",
+            "title": "Failed Deliveries",
+            "default": 0
+          },
+          "last_delivery_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Delivery Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "client_name",
+          "webhook_url",
+          "subscribed_events"
+        ],
+        "title": "SubscriptionModel"
+      },
+      "SubscriptionRequest": {
+        "properties": {
+          "client_name": {
+            "type": "string",
+            "title": "Client Name",
+            "description": "Name of the subscribing client system or Appian process",
+            "example": "Appian Healthcare PDM Orchestration"
+          },
+          "webhook_url": {
+            "type": "string",
+            "title": "Webhook Url",
+            "description": "Target HTTP/HTTPS webhook URL (e.g. Appian Web API endpoint)",
+            "example": "https://myhealthplan.appiancloud.com/suite/webapi/credentialing-callback"
+          },
+          "subscribed_events": {
+            "items": {
+              "$ref": "#/components/schemas/SubscriptionEventType"
+            },
+            "type": "array",
+            "title": "Subscribed Events",
+            "description": "List of credentialing event types to receive",
+            "example": [
+              "BATCH_COMPLETED",
+              "RECREDENTIALING_ALERT"
+            ]
+          },
+          "auth_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Token",
+            "description": "Optional Bearer token for authenticating against the target webhook",
+            "example": "appian_api_key_xyz_789"
+          },
+          "secret_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secret Key",
+            "description": "Shared secret used to generate HMAC-SHA256 header 'X-CredAgent-Signature'",
+            "example": "cred-secret-key-42"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "description": "Whether the subscription is currently active",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "client_name",
+          "webhook_url"
+        ],
+        "title": "SubscriptionRequest"
+      },
+      "SubscriptionUpdateRequest": {
+        "properties": {
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active",
+            "description": "Toggle active/paused status"
+          },
+          "webhook_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Webhook Url",
+            "description": "Updated target webhook URL"
+          }
+        },
+        "type": "object",
+        "title": "SubscriptionUpdateRequest"
+      },
+      "TestWebhookRequest": {
+        "properties": {
+          "event_type": {
+            "$ref": "#/components/schemas/SubscriptionEventType",
+            "description": "Simulated event type for the test ping",
+            "default": "CREDENTIALING_COMPLETED"
+          }
+        },
+        "type": "object",
+        "title": "TestWebhookRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorkHistoryItem": {
+        "properties": {
+          "organization": {
+            "type": "string",
+            "title": "Organization"
+          },
+          "position": {
+            "type": "string",
+            "title": "Position"
+          },
+          "start_date": {
+            "type": "string",
+            "title": "Start Date"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date",
+            "default": "Present"
+          },
+          "current": {
+            "type": "boolean",
+            "title": "Current",
+            "default": true
+          },
+          "gap_flag": {
+            "type": "boolean",
+            "title": "Gap Flag",
+            "default": false
+          },
+          "gap_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gap Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "organization",
+          "position",
+          "start_date"
+        ],
+        "title": "WorkHistoryItem"
+      }
+    }
+  }
+}

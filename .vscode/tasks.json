@@ -1,0 +1,39 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "📦 Install Dependencies",
+      "type": "shell",
+      "command": "python -m pip install -r requirements.txt",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🧪 Run Unit & Integration Tests",
+      "type": "shell",
+      "command": "python -m pytest tests/test_cred_agent.py -v",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🚀 Start Appian REST API",
+      "type": "shell",
+      "command": "python api/appian_api.py",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "🏥 Start Streamlit Dashboard",
+      "type": "shell",
+      "command": "streamlit run ui/app.py",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

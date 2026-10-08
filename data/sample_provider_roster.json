@@ -1,0 +1,79 @@
+[
+  {
+    "npi": "1234567893",
+    "first_name": "Sarah",
+    "last_name": "Conner",
+    "caqh_id": "14892011",
+    "tin": "74-8899123",
+    "group_name": "Austin Family Health Partners",
+    "specialty": "Family Medicine",
+    "practice_state": "TX",
+    "requested_products": [
+      "Commercial HMO",
+      "Commercial PPO",
+      "Medicare Advantage",
+      "Medicaid"
+    ]
+  },
+  {
+    "npi": "1987654321",
+    "first_name": "Robert",
+    "last_name": "Chen",
+    "caqh_id": "15983022",
+    "tin": "75-1122334",
+    "group_name": "Dallas Internal Medicine Specialists",
+    "specialty": "Internal Medicine",
+    "practice_state": "TX",
+    "requested_products": [
+      "Commercial HMO",
+      "Commercial PPO",
+      "Medicare Advantage",
+      "Medicaid"
+    ]
+  },
+  {
+    "npi": "1457896325",
+    "first_name": "Emily",
+    "last_name": "Watson",
+    "caqh_id": "16744033",
+    "tin": "59-9944112",
+    "group_name": "Biscayne Orthopedics Group",
+    "specialty": "Orthopedic Surgery",
+    "practice_state": "FL",
+    "requested_products": [
+      "Commercial HMO",
+      "Commercial PPO",
+      "Medicare Advantage"
+    ]
+  },
+  {
+    "npi": "1122334455",
+    "first_name": "Marcus",
+    "last_name": "Vance",
+    "caqh_id": "11229988",
+    "tin": "74-3322119",
+    "group_name": "Vance Heart Center",
+    "specialty": "Cardiology",
+    "practice_state": "TX",
+    "requested_products": [
+      "Commercial HMO",
+      "Medicare Advantage",
+      "Medicaid"
+    ]
+  },
+  {
+    "npi": "1679543218",
+    "first_name": "Elizabeth",
+    "last_name": "Bennett",
+    "caqh_id": "18829910",
+    "tin": "94-5544332",
+    "group_name": "Bay Area Childrens Clinic",
+    "specialty": "Pediatrics",
+    "practice_state": "CA",
+    "requested_products": [
+      "Commercial HMO",
+      "Commercial PPO",
+      "Medicaid"
+    ]
+  }
+]
