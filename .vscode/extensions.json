@@ -4,6 +4,7 @@
     "ms-python.debugpy",
     "charliermarsh.ruff",
     "humao.rest-client",
-    "mechatroner.rainbow-csv"
+    "mechatroner.rainbow-csv",
+    "google.geminicodeassist"
   ]
 }

@@ -94,6 +94,9 @@ def main():
         result = orchestrator.process_single_provider(provider_item)
         print_provider_result(result)
         if args.output:
+            out_dir = os.path.dirname(os.path.abspath(args.output))
+            if out_dir:
+                os.makedirs(out_dir, exist_ok=True)
             with open(args.output, "w", encoding="utf-8") as f:
                 f.write(result.model_dump_json(indent=2))
             print(f"\n[+] Saved results to {args.output}")
@@ -119,6 +122,9 @@ def main():
             print_provider_result(res)
 
         if args.output:
+            out_dir = os.path.dirname(os.path.abspath(args.output))
+            if out_dir:
+                os.makedirs(out_dir, exist_ok=True)
             with open(args.output, "w", encoding="utf-8") as f:
                 f.write(batch_result.model_dump_json(indent=2))
             print(f"\n[+] Saved full batch results to {args.output}")

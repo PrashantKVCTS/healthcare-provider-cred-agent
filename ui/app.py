@@ -136,21 +136,27 @@ if nav_mode == "📁 Roster Batch Ingestion":
 
     roster_content = None
     filename = "sample_provider_roster.csv"
+    file_identifier = None
 
     if uploaded_file is not None:
-        roster_content = uploaded_file.getvalue().decode("utf-8", errors="replace")
-        filename = uploaded_file.name
+        file_identifier = f"upload_{uploaded_file.name}_{uploaded_file.size}"
+        if st.session_state.get("last_processed_file") != file_identifier:
+            roster_content = uploaded_file.getvalue().decode("utf-8", errors="replace")
+            filename = uploaded_file.name
     elif use_sample or "batch_results" not in st.session_state:
-        sample_path = os.path.join(current_dir, "data", "sample_provider_roster.csv")
-        if os.path.exists(sample_path):
-            with open(sample_path, "r", encoding="utf-8") as f:
-                roster_content = f.read()
-                filename = "sample_provider_roster.csv"
+        file_identifier = "sample_provider_roster.csv"
+        if use_sample or st.session_state.get("last_processed_file") != file_identifier:
+            sample_path = os.path.join(current_dir, "data", "sample_provider_roster.csv")
+            if os.path.exists(sample_path):
+                with open(sample_path, "r", encoding="utf-8") as f:
+                    roster_content = f.read()
+                    filename = "sample_provider_roster.csv"
 
     if roster_content:
         with st.spinner("🤖 Credentialing Agentic Workflow in progress (Intake -> PSV -> Committee Rules)..."):
             batch_result = orchestrator.process_roster(roster_content, filename=filename)
             st.session_state["batch_results"] = batch_result
+            st.session_state["last_processed_file"] = file_identifier
 
     if "batch_results" in st.session_state:
         res = st.session_state["batch_results"]
@@ -468,7 +474,7 @@ elif nav_mode == "⚡ Appian Integration Specs":
             )
 
 # -------------------------------------------------------------
-# MODE 4: MARKET LINES RULES
+# MODE 5: MARKET LINES RULES
 # -------------------------------------------------------------
 elif nav_mode == "⚙️ Market Lines Rules":
     st.markdown('<div class="main-header">Business Market Lines & Product Configuration</div>', unsafe_allow_html=True)

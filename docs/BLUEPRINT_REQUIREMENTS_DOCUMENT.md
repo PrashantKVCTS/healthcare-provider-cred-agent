@@ -4,7 +4,7 @@
 **Project Name**: Healthcare Provider Credentialing Approval Agentic System  
 **Target Systems**: Provider Management Systems (PMS), Provider Data Management (PDM), Appian Cloud Platform  
 **Accreditation Standards**: NCQA (CR1–CR4), CMS Medicare/Medicaid Managed Care Manuals  
-**Version**: 2.0.0  
+**Version**: 2.1.0  
 **Status**: APPROVED & IMPLEMENTED  
 
 ---

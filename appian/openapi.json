@@ -3,7 +3,7 @@
   "info": {
     "title": "Appian Provider Credentialing Approval Agent API",
     "description": "Enterprise Credentialing Approval and Event Subscription API for Healthcare Provider Management Systems (PMS). Performs Primary Source Verification (NPI & CAQH ProView), captures clinical credentials (education, work history, state licenses, DEA, board certifications), evaluates business market lines with products/dates, and publishes event webhooks for Appian Process Automation.",
-    "version": "2.0.0"
+    "version": "2.1.0"
   },
   "paths": {
     "/api/v1/health": {

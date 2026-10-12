@@ -128,6 +128,19 @@ def test_batch_roster_processing(orchestrator):
     assert batch_result.denied_count == 1
 
 
+def test_batch_roster_json_processing(orchestrator):
+    """Test full batch processing of sample JSON roster."""
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+    sample_json = os.path.join(data_dir, "sample_provider_roster.json")
+    batch_result = orchestrator.process_roster(sample_json)
+
+    assert batch_result.total_providers == 5
+    assert batch_result.approved_count >= 2
+    assert batch_result.conditional_count == 1
+    assert batch_result.committee_review_count == 1
+    assert batch_result.denied_count == 1
+
+
 def test_appian_api_health_endpoint(test_client):
     """Verify Appian Connected System health endpoint."""
     response = test_client.get("/api/v1/health")

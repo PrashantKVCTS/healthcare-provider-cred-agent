@@ -7,6 +7,7 @@ Handles diverse payer/PMS column mappings and performs baseline data hygiene.
 import csv
 import json
 import io
+import os
 from typing import List, Dict, Any, Union
 from models.provider_models import RosterProviderItem
 
@@ -31,10 +32,14 @@ class RosterIngestionAgent:
 
     def _normalize_row_keys(self, row: Dict[str, Any]) -> Dict[str, Any]:
         """Normalize various column names into canonical keys."""
+        if not isinstance(row, dict):
+            return {}
         normalized = {}
         for canonical_key, aliases in self.COLUMN_MAPPINGS.items():
             for raw_key, raw_val in row.items():
-                clean_raw_key = raw_key.strip().lower().replace(" ", "_").replace("-", "_")
+                if not raw_key:
+                    continue
+                clean_raw_key = str(raw_key).strip().lower().replace(" ", "_").replace("-", "_")
                 if clean_raw_key in aliases or clean_raw_key == canonical_key:
                     normalized[canonical_key] = raw_val
                     break
@@ -42,28 +47,44 @@ class RosterIngestionAgent:
 
     def parse_csv_content(self, csv_text_or_filepath: str) -> List[RosterProviderItem]:
         """Parse CSV text or file path into a list of RosterProviderItem objects."""
-        # Check if input is a filepath or raw CSV content
-        if "\n" in csv_text_or_filepath or "," in csv_text_or_filepath:
-            reader = csv.DictReader(io.StringIO(csv_text_or_filepath.strip()))
-        else:
-            with open(csv_text_or_filepath, mode="r", encoding="utf-8") as f:
+        if not csv_text_or_filepath:
+            return []
+        if os.path.isfile(csv_text_or_filepath):
+            with open(csv_text_or_filepath, mode="r", encoding="utf-8-sig") as f:
                 reader = csv.DictReader(f)
                 return self._process_dict_rows(list(reader))
 
+        clean_text = csv_text_or_filepath.strip().lstrip("\ufeff")
+        reader = csv.DictReader(io.StringIO(clean_text))
         return self._process_dict_rows(list(reader))
 
     def parse_json_content(self, json_content: Union[str, List[Dict[str, Any]]]) -> List[RosterProviderItem]:
-        """Parse JSON array or string of provider records."""
+        """Parse JSON array, raw JSON string, or JSON file path of provider records."""
+        if not json_content:
+            return []
         if isinstance(json_content, str):
-            rows = json.loads(json_content)
+            clean_str = json_content.strip().lstrip("\ufeff")
+            if os.path.isfile(json_content):
+                with open(json_content, mode="r", encoding="utf-8-sig") as f:
+                    rows = json.load(f)
+            else:
+                rows = json.loads(clean_str)
         else:
             rows = json_content
+
+        if isinstance(rows, dict):
+            rows = [rows]
+
         return self._process_dict_rows(rows)
 
     def _process_dict_rows(self, raw_rows: List[Dict[str, Any]]) -> List[RosterProviderItem]:
         """Process and validate list of raw row dictionaries."""
+        if not isinstance(raw_rows, list):
+            return []
         items: List[RosterProviderItem] = []
         for index, row in enumerate(raw_rows):
+            if not isinstance(row, dict):
+                continue
             norm = self._normalize_row_keys(row)
             npi = str(norm.get("npi", "")).strip().replace(".0", "")
             first_name = str(norm.get("first_name", "")).strip()

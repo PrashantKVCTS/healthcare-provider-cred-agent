@@ -8,6 +8,7 @@ Coordinates multi-agent provider credentialing approval workflow:
 5. Event notifications via Credentialing Service Subscription API.
 """
 
+import os
 import uuid
 from typing import List, Dict, Any, Union, Optional
 from models.provider_models import RosterProviderItem
@@ -174,11 +175,27 @@ class CredentialingOrchestrator:
         """Process an entire roster file (CSV file path, raw string, or JSON list)."""
         batch_id = f"BATCH-{uuid.uuid4().hex[:6].upper()}"
 
+        if isinstance(roster_input, str) and filename == "roster.csv" and os.path.isfile(roster_input):
+            filename = os.path.basename(roster_input)
+
         if isinstance(roster_input, list):
             providers = self.ingestion_agent.parse_json_content(roster_input)
         elif isinstance(roster_input, str):
-            if roster_input.strip().startswith("[") or roster_input.strip().startswith("{"):
+            stripped = roster_input.strip()
+            if stripped.startswith("[") or stripped.startswith("{"):
                 providers = self.ingestion_agent.parse_json_content(roster_input)
+            elif roster_input.lower().endswith(".json") or filename.lower().endswith(".json"):
+                providers = self.ingestion_agent.parse_json_content(roster_input)
+            elif os.path.isfile(roster_input):
+                try:
+                    with open(roster_input, "r", encoding="utf-8-sig") as f:
+                        first_chars = f.read(10).strip()
+                    if first_chars.startswith("[") or first_chars.startswith("{"):
+                        providers = self.ingestion_agent.parse_json_content(roster_input)
+                    else:
+                        providers = self.ingestion_agent.parse_csv_content(roster_input)
+                except Exception:
+                    providers = self.ingestion_agent.parse_csv_content(roster_input)
             else:
                 providers = self.ingestion_agent.parse_csv_content(roster_input)
         else:

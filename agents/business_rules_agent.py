@@ -57,10 +57,11 @@ class BusinessRulesAgent:
         committee_flags: List[str] = []
 
         now = datetime.now()
-        # Effective date starts 1st of next month or today
+        # Effective date starts 1st of next month or month after next if late in month
         if now.day > 25:
-            # If late in month, effective 1st of month after next
-            next_month = (now.replace(day=1) + timedelta(days=32)).replace(day=1)
+            # If late in month, effective 1st of month after next (advance 2 months)
+            first_of_next_month = (now.replace(day=28) + timedelta(days=4)).replace(day=1)
+            next_month = (first_of_next_month.replace(day=28) + timedelta(days=4)).replace(day=1)
         else:
             next_month = (now.replace(day=28) + timedelta(days=4)).replace(day=1)
             
@@ -176,6 +177,22 @@ class BusinessRulesAgent:
                         network_tier=tier,
                         specialty_scope=provider_specialty,
                         approval_reason=f"Product not offered in provider practice state ({practice_st})."
+                    ))
+                    continue
+
+                # Specialty eligibility check
+                if not spec_matched:
+                    rejected_lines.append(MarketProductApproval(
+                        market_line=line_name,
+                        product_name=prod_name,
+                        plan_code=prod_code,
+                        status="REJECTED",
+                        effective_date=effective_date_str,
+                        expiration_date=expiration_date_str,
+                        recred_due_date=recred_due_date_str,
+                        network_tier=tier,
+                        specialty_scope=provider_specialty,
+                        approval_reason=f"Provider specialty '{provider_specialty}' is not eligible for market line '{line_name}'."
                     ))
                     continue
 

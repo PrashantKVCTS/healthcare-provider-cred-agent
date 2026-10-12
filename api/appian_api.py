@@ -30,7 +30,7 @@ app = FastAPI(
         "state licenses, DEA, board certifications), evaluates business market lines with products/dates, "
         "and publishes event webhooks for Appian Process Automation."
     ),
-    version="2.0.0",
+    version="2.1.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -139,7 +139,7 @@ def health_check():
     return HealthResponse(
         status="UP",
         service="Healthcare Credentialing Approval Agent",
-        version="2.0.0",
+        version="2.1.0",
         connected_system_ready=True,
         active_subscriptions=active_count
     )
