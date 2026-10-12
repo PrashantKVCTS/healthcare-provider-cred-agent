@@ -22,14 +22,14 @@
       }
     },
     {
-      "label": "🚀 Start Appian REST API",
+      "label": "🌐 Start Web Workbench API (http://localhost:8000/ui)",
       "type": "shell",
-      "command": "python api/appian_api.py",
+      "command": "python -m uvicorn api.appian_api:app --host 0.0.0.0 --port 8000 --reload",
       "isBackground": true,
       "problemMatcher": []
     },
     {
-      "label": "🏥 Start Streamlit Dashboard",
+      "label": "🏥 Start Streamlit Operations Portal (http://localhost:8501)",
       "type": "shell",
       "command": "streamlit run ui/app.py",
       "isBackground": true,

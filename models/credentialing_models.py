@@ -47,8 +47,14 @@ class ProviderCredentialingResult(BaseModel):
     decision_summary: str
     decision_date: str = Field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d"))
     recredentialing_due_date: str
+    # Committee review and human decision overrides
     committee_review_needed: bool = False
     committee_flags: List[str] = Field(default_factory=list)
+    committee_decision: Optional[str] = None  # e.g. "APPROVED", "CONDITIONAL_APPROVAL", "DENIED", "DEFERRED"
+    committee_notes: Optional[str] = None
+    committee_reviewer: Optional[str] = None
+    committee_signed_at: Optional[str] = None
+    committee_stipulations: List[str] = Field(default_factory=list)
 
     # PSV verification checks
     psv_checks: List[PSVCheckItem] = Field(default_factory=list)

@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "🚀 1. Run Appian Credentialing API (FastAPI)",
+      "name": "🌐 1. Run Web Workbench & API (FastAPI: http://localhost:8000/ui)",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -22,7 +22,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "🏥 2. Run Streamlit Dashboard",
+      "name": "🏥 2. Run Operations & Committee Portal (Streamlit: http://localhost:8501)",
       "type": "debugpy",
       "request": "launch",
       "module": "streamlit",

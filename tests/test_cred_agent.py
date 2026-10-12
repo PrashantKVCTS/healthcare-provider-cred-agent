@@ -221,3 +221,28 @@ def test_continuous_monitoring_alert_scan(test_client):
     assert scan_data["providers_evaluated"] >= 5
     assert "caqh_alerts_dispatched" in scan_data
     assert "recred_alerts_dispatched" in scan_data
+
+
+def test_web_workbench_ui_routes(test_client):
+    """Verify standalone Web Workbench HTML endpoint and root redirect."""
+    # Root redirects to /ui
+    root_resp = test_client.get("/", follow_redirects=False)
+    assert root_resp.status_code in [307, 302]
+    assert root_resp.headers["location"] == "/ui"
+
+    # /ui returns 200 and serves HTML
+    ui_resp = test_client.get("/ui")
+    assert ui_resp.status_code == 200
+    assert "text/html" in ui_resp.headers["content-type"]
+    assert "Credentialing Agent Web Workbench" in ui_resp.text
+
+
+def test_process_sample_roster_endpoint(test_client):
+    """Verify 1-click sample roster ingestion endpoint for UI operations."""
+    resp = test_client.post("/api/v1/roster/process-sample")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total_providers"] == 5
+    assert data["approved_count"] >= 2
+    assert len(data["results"]) == 5
+

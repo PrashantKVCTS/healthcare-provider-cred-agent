@@ -6,9 +6,18 @@ Process Models, and Webhook Event Subscriptions.
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, status, Path
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import base64
+import os
+import sys
+
+# Ensure project root is in sys.path when executed directly or via python api/appian_api.py
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 import uvicorn
 
 from agents.credentialing_orchestrator import CredentialingOrchestrator
@@ -129,6 +138,25 @@ class HealthResponse(BaseModel):
 
 
 # -------------------------------------------------------------
+# 0. STANDALONE WEB OPERATIONS WORKBENCH UI
+# -------------------------------------------------------------
+@app.get("/", include_in_schema=False)
+def root_redirect():
+    """Redirect root to the interactive Web Operations Workbench UI."""
+    return RedirectResponse(url="/ui")
+
+
+@app.get("/ui", response_class=HTMLResponse, tags=["Web Operations UI"], summary="Web Operations Workbench UI")
+def serve_web_ui():
+    """Serves the standalone HTML/JS Credentialing Operations Workbench UI."""
+    portal_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ui", "portal.html")
+    if os.path.exists(portal_path):
+        with open(portal_path, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse("<h3>Portal UI not found.</h3>", status_code=404)
+
+
+# -------------------------------------------------------------
 # 1. SYSTEM & HEALTH CHECK
 # -------------------------------------------------------------
 @app.get("/api/v1/health", response_model=HealthResponse, tags=["Appian Health & System"])
@@ -235,6 +263,26 @@ def process_roster_json(providers: List[SingleProviderRequest]):
     dict_payload = [p.model_dump() for p in providers]
     batch_result = orchestrator.process_roster(dict_payload, filename="appian_process_roster.json")
     return batch_result
+
+
+@app.post(
+    "/api/v1/roster/process-sample",
+    response_model=BatchRosterResult,
+    tags=["Appian Credentialing Automation"],
+    summary="Process Sample Test Roster (Web UI 1-Click Intake)"
+)
+def process_sample_roster():
+    """
+    Loads and evaluates the default multi-scenario sample provider roster.
+    Useful for immediate testing, demos, and web portal operations.
+    """
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+    sample_csv = os.path.join(data_dir, "sample_provider_roster.csv")
+    if not os.path.exists(sample_csv):
+        raise HTTPException(status_code=404, detail="Default sample provider roster file not found.")
+    with open(sample_csv, "r", encoding="utf-8") as f:
+        content = f.read()
+    return orchestrator.process_roster(content, filename="sample_provider_roster.csv")
 
 
 # -------------------------------------------------------------
@@ -380,4 +428,6 @@ def get_appian_openapi():
 
 
 if __name__ == "__main__":
-    uvicorn.run("api.appian_api:app", host="0.0.0.0", port=8000, reload=True)
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run("api.appian_api:app", host=host, port=port, app_dir=PROJECT_ROOT)

@@ -99,35 +99,45 @@ The repository includes pre-configured `.vscode/launch.json` debug profiles:
    ```
 2. Press **Ctrl + Shift + D** (or click the **Run & Debug** tab on the left).
 3. Select your desired launch target from the dropdown:
-   * **`🚀 1. Run Appian Credentialing API (FastAPI)`**: Starts the REST API on `http://localhost:8000` with hot-reloading.
-   * **`🏥 2. Run Streamlit Dashboard`**: Starts the interactive web UI on `http://localhost:8501`.
+   * **`🌐 1. Run Web Workbench & API (FastAPI: http://localhost:8000/ui)`**: Starts the REST API and embedded web UI on `http://localhost:8000/ui`.
+   * **`🏥 2. Run Operations & Committee Portal (Streamlit: http://localhost:8501)`**: Starts the interactive operations and committee portal on `http://localhost:8501`.
    * **`📋 3. Run CLI Batch Roster Process`**: Runs credentialing against `data/sample_provider_roster.csv`.
-   * **`🧪 4. Run Pytest Test Suite`**: Executes all 11 unit and integration tests with coverage.
+   * **`🧪 4. Run Pytest Test Suite`**: Executes all 12 unit and integration tests with coverage.
 4. Press **F5** to start!
 
 ---
 
-### Mode 2: Terminal / CLI Execution
+### Mode 2: Standalone UI & Terminal Execution (No Appian Needed)
 
-#### A. Start the Appian REST API:
-```bash
-python -m uvicorn api.appian_api:app --host 127.0.0.1 --port 8000 --reload
-```
-* **Interactive API Documentation (Swagger)**: [http://localhost:8000/docs](http://localhost:8000/docs)
-* **ReDoc Documentation**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
-* **Appian OpenAPI 3.0 Export**: [http://localhost:8000/api/v1/appian/openapi.json](http://localhost:8000/api/v1/appian/openapi.json)
-
-#### B. Start the Streamlit Operations Cockpit:
-```bash
-streamlit run ui/app.py
-```
-* Automatically opens in your browser at: **`http://localhost:8501`**
-* Features:
-  - **📁 Roster Batch Ingestion**: Drag-and-drop CSV rosters, view batch metrics, download Appian-ready JSON results.
+#### A. 1-Click Launch of Streamlit Operations & Committee Portal (Recommended):
+* **Windows Batch**: Double-click `run_ui.bat` or run:
+  ```cmd
+  run_ui.bat
+  ```
+* **PowerShell**:
+  ```powershell
+  .\run_ui.ps1
+  ```
+* **Unified Python CLI**:
+  ```bash
+  python run_agent.py --ui
+  ```
+  *(Automatically opens in your browser at **`http://localhost:8501`**)*
+* Key Modules:
+  - **📁 Roster Ingestion & Case Management**: Drag-and-drop CSV/JSON rosters, real-time NPI/name search, status filters.
+  - **⚖️ Credentialing Committee & Peer Review**: Human-in-the-loop review queue, deliberation notes, custom stipulations, and binding electronic sign-offs.
+  - **📜 Committee Docket & Adverse Action Generator**: 1-click export of formal Medical Executive Committee (MEC) Dockets (.md) and HCQIA Adverse Action notices.
   - **🩺 On-Demand Single Provider**: Test individual provider credentialing with live PSV verification.
-  - **🔔 Event Subscriptions & Webhooks**: Register Appian webhook endpoints, send test pings, and run continuous 90-day alert scans.
-  - **⚡ Appian Integration Specs**: Download OpenAPI spec and view Appian Connected System parameters.
   - **⚙️ Market Lines Rules**: Inspect healthcare payer product rules and NCQA 36-month cycles.
+  - **🔔 Event Subscriptions & Monitoring**: Register webhook callbacks, send test pings, and trigger 90-day alert scans.
+
+#### B. Start the Embedded Web Operations Workbench (FastAPI):
+```bash
+python run_agent.py --web
+# Or: python -m uvicorn api.appian_api:app --host 127.0.0.1 --port 8000 --reload
+```
+* **Interactive Web UI**: [http://localhost:8000/ui](http://localhost:8000/ui)
+* **Interactive API Documentation (Swagger)**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 #### C. Run the Standalone CLI Batch Runner:
 ```bash

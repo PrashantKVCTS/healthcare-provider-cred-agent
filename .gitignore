@@ -10,6 +10,8 @@ htmlcov/
 
 # Environments
 .venv/
+.venv_linux/
+.vagrant/
 env/
 venv/
 ENV/

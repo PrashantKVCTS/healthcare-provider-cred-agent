@@ -77,9 +77,34 @@ def main():
     parser.add_argument("--last", type=str, default="Provider", help="Provider Last Name")
     parser.add_argument("--state", type=str, default="TX", help="Practice State")
     parser.add_argument("--output", type=str, help="Save JSON results to output file")
+    parser.add_argument("--ui", action="store_true", help="Launch interactive Streamlit Operations & Committee Portal")
+    parser.add_argument("--web", action="store_true", help="Launch FastAPI Web Operations Workbench (http://localhost:8000/ui)")
+    parser.add_argument("--host", type=str, default=os.getenv("HOST", "0.0.0.0"), help="Host IP to bind services to (default: 0.0.0.0 for VM & network accessibility)")
+    parser.add_argument("--port", type=int, default=int(os.getenv("PORT", "8000")), help="Port for FastAPI Web Workbench (default: 8000)")
+    parser.add_argument("--ui-port", type=int, default=int(os.getenv("UI_PORT", "8501")), help="Port for Streamlit Portal (default: 8501)")
 
     args = parser.parse_args()
     print_banner()
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    if args.ui:
+        print(f"[*] Launching Streamlit Operations & Committee Portal on http://{args.host}:{args.ui_port} ...")
+        import subprocess
+        ui_script = os.path.join(base_dir, "ui", "app.py")
+        subprocess.run([
+            sys.executable, "-m", "streamlit", "run", ui_script,
+            "--server.address", args.host,
+            "--server.port", str(args.ui_port),
+            "--server.headless", "true"
+        ])
+        return
+
+    if args.web:
+        print(f"[*] Launching Web Operations Workbench API on http://{args.host}:{args.port}/ui ...")
+        import uvicorn
+        uvicorn.run("api.appian_api:app", host=args.host, port=args.port, reload=True)
+        return
 
     orchestrator = CredentialingOrchestrator()
 

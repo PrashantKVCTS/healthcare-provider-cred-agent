@@ -118,6 +118,7 @@ provider_cred_agent/
 │   └── subscriptions.json          # Persistent subscription store
 ├── docs/
 │   ├── BLUEPRINT_REQUIREMENTS_DOCUMENT.md # Functional Requirements Specification & Blueprint
+│   ├── STANDALONE_UI_WORKFLOW_GUIDE.md   # Guide for running UI without Appian
 │   ├── LOCAL_SETUP_AND_RUN_GUIDE.md      # Local setup, VS Code, CLI, and Docker guide
 │   ├── TECHNICAL_DESIGN_DOCUMENT.md      # Full Technical Design Document (TDD)
 │   ├── CLOUD_PRODUCTION_DEPLOYMENT_GUIDE.md # Production GCP deployment & HIPAA guide
@@ -132,18 +133,79 @@ provider_cred_agent/
 │   ├── sanctions_service.py        # OIG LEIE & SAM.gov exclusion checks
 │   └── subscription_service.py     # Webhook dispatcher & HMAC security
 ├── tests/
-│   └── test_cred_agent.py          # Pytest automated test suite (11 tests)
+│   └── test_cred_agent.py          # Pytest automated test suite (12 tests)
 ├── ui/
-│   └── app.py                      # Interactive Streamlit dashboard
+│   ├── app.py                      # Standalone Operations & Committee Portal (Streamlit)
+│   └── portal.html                 # Embedded Web Workbench (FastAPI at /ui)
+├── Vagrantfile                     # Turnkey Ubuntu 22.04 LTS VM configuration
+├── create_vm.bat                   # 1-click Local VM Creator & Provisioner (Interactive/CLI)
+├── create_vm.ps1                   # Companion PowerShell VM Provisioner
+├── vm_start_api.bat                # Start FastAPI Web Workbench bound to 0.0.0.0:8000
+├── vm_start_ui.bat                 # Start Streamlit Committee Portal bound to 0.0.0.0:8501
+├── vm_run_all.bat                  # Concurrently start all services in VM and launch host browser
+├── scripts/
+│   ├── provision_hyperv.ps1        # Hyper-V internal switch, NAT & port-mapping provisioner
+│   └── provision_wsl.sh            # WSL2 Linux environment provisioner
 ├── Dockerfile                      # Multi-stage secure production Dockerfile
 ├── docker-compose.yml              # Local container stack for API and UI
 ├── .dockerignore                   # Build exclusion rules
 ├── requirements.txt                # Pinned dependencies
-├── run_agent.py                    # Standalone CLI runner
+├── run_agent.py                    # Standalone CLI / UI launcher (--ui, --web, --host, --port)
+├── run_ui.bat                      # 1-click Windows batch script to launch UI
+├── run_ui.ps1                      # 1-click PowerShell script to launch UI
 ├── setup.ps1                       # 1-click Windows PowerShell setup script
 ├── setup.bat                       # 1-click Windows batch setup script
 └── README.md
 ```
+
+---
+
+## 🖥️ Running in a Local Virtual Machine (VM)
+
+You can run the entire agentic credentialing platform inside an isolated local Virtual Machine (VM) or container sandbox using the automated VM creator:
+
+### 1-Click VM Creation & Provisioning
+Double-click [`create_vm.bat`](file:///c:/Users/866223/.gemini/antigravity/scratch/provider_cred_agent/create_vm.bat) or execute from terminal:
+
+```bat
+# Interactive VM Wizard:
+create_vm.bat
+
+# Direct Provisioning Modes:
+create_vm.bat --venv       # Create & provision Python VM sandbox (.venv) [Instant]
+create_vm.bat --hyperv     # Provision Windows Hyper-V VM with internal NAT
+create_vm.bat --wsl        # Provision and run inside WSL2 Linux VM
+create_vm.bat --vagrant    # Launch Vagrant / VirtualBox Ubuntu 22.04 VM
+create_vm.bat --test       # Run test suite inside VM
+create_vm.bat --start      # Concurrently launch all VM services
+```
+
+### VM Helper Launchers:
+- **FastAPI Web Workbench**: [`vm_start_api.bat`](file:///c:/Users/866223/.gemini/antigravity/scratch/provider_cred_agent/vm_start_api.bat) (Binds to `0.0.0.0:8000`)
+- **Streamlit Committee Portal**: [`vm_start_ui.bat`](file:///c:/Users/866223/.gemini/antigravity/scratch/provider_cred_agent/vm_start_ui.bat) (Binds to `0.0.0.0:8501`)
+- **Launch Everything**: [`vm_run_all.bat`](file:///c:/Users/866223/.gemini/antigravity/scratch/provider_cred_agent/vm_run_all.bat) (Opens both services and host browser)
+
+For complete architectural details, see the **[Local VM Execution & Provisioning Guide](docs/VM_LOCAL_RUN_GUIDE.md)**.
+
+---
+
+## 🖥️ Running the UI (Standalone Workflow Without Appian)
+
+You do **not** need Appian to run this system. The project provides two fully-functional standalone UI tools:
+
+### Option 1: Operations & Committee Portal (Streamlit - Recommended)
+A full-featured Operations Portal with Roster Intake, Human-in-the-Loop Committee Review, Case Management, MEC Docket Export, and Adverse Action Notice generation.
+- **1-Click Batch Script**: Double-click `run_ui.bat`
+- **PowerShell**: `.\run_ui.ps1`
+- **Python CLI**: `python run_agent.py --ui` or `streamlit run ui/app.py`
+- **Browser URL**: **`http://localhost:8501`**
+
+### Option 2: Embedded Web Operations Workbench (FastAPI)
+Zero-dependency single-page web dashboard served directly by the API backend:
+- **Python CLI**: `python run_agent.py --web` or `python -m uvicorn api.appian_api:app --reload`
+- **Browser URL**: **`http://localhost:8000/ui`**
+
+For complete step-by-step instructions on operating the system entirely through the UI, see the [Standalone UI Workflow Guide](docs/STANDALONE_UI_WORKFLOW_GUIDE.md).
 
 ---
 
@@ -164,10 +226,10 @@ provider_cred_agent/
    ```
 2. Press **Ctrl + Shift + P** and select **Tasks: Run Task > 📦 Install Dependencies**.
 3. Press **F5** to run any of the pre-configured targets:
-   - **`🚀 1. Run Appian Credentialing API (FastAPI)`**: Starts REST API on `http://localhost:8000` with Swagger Docs at `http://localhost:8000/docs`.
-   - **`🏥 2. Run Streamlit Dashboard`**: Starts the interactive web dashboard on `http://localhost:8501`.
+   - **`🌐 1. Run Web Workbench & API (FastAPI: http://localhost:8000/ui)`**: Starts REST API and embedded web workbench.
+   - **`🏥 2. Run Operations & Committee Portal (Streamlit: http://localhost:8501)`**: Starts the complete interactive operations portal.
    - **`📋 3. Run CLI Batch Roster Process`**: Runs credentialing against `data/sample_provider_roster.csv`.
-   - **`🧪 4. Run Pytest Test Suite`**: Executes all 11 unit and integration tests.
+   - **`🧪 4. Run Pytest Test Suite`**: Executes all 12 unit and integration tests.
 
 ---
 
@@ -192,8 +254,10 @@ For detailed instructions, refer to the [Appian Integration Guide](appian/appian
 
 ## 📖 Technical Documentation
 
-* **[Blueprint & Requirements Document (FRS)](docs/BLUEPRINT_REQUIREMENTS_DOCUMENT.md)**: Comprehensive business blueprint, functional requirements (FR-1 to FR-8), NFRs, traceability matrix, and Appian process blueprint.
+* **[Local Virtual Machine (VM) Run & Provisioning Guide](docs/VM_LOCAL_RUN_GUIDE.md)**: 1-click VM creation, Vagrant, Hyper-V, WSL2, host networking, and port binding.
 * **[Local Project Setup & Run Guide](docs/LOCAL_SETUP_AND_RUN_GUIDE.md)**: Turnkey local setup, VS Code 1-click execution, CLI commands, Docker Compose, and troubleshooting recipes.
+* **[Standalone UI Workflow Guide](docs/STANDALONE_UI_WORKFLOW_GUIDE.md)**: Full guide to operating the platform using Streamlit Operations Portal and FastAPI Web Workbench without Appian.
+* **[Blueprint & Requirements Document (FRS)](docs/BLUEPRINT_REQUIREMENTS_DOCUMENT.md)**: Comprehensive business blueprint, functional requirements (FR-1 to FR-8), NFRs, traceability matrix, and Appian process blueprint.
 * **[Technical Design Document (TDD)](docs/TECHNICAL_DESIGN_DOCUMENT.md)**: Full architecture specification, NCQA/CMS compliance rules, database/CDT schemas, HMAC security, and sequence diagrams.
 * **[Cloud Production Deployment Guide (GCP)](docs/CLOUD_PRODUCTION_DEPLOYMENT_GUIDE.md)**: Step-by-step production deployment to Google Cloud Platform (Cloud Run, HIPAA compliance, Secret Manager, Cloud Armor WAF, CI/CD, and Appian Cloud connectivity).
 * **[Agentic AI Technical Learnings & Concepts](docs/AGENTIC_AI_TECHNICAL_LEARNINGS.md)**: Comprehensive deep dive on Agentic AI vs. Chatbots/Scripts, Multi-Agent System (MAS) architecture, technology choices, and Low-Code + Agentic AI synergy.
