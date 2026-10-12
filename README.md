@@ -2,6 +2,8 @@
 
 An enterprise-grade, multi-agent automated credentialing and approval platform for Healthcare Provider Management Systems (PMS / PDM). Built to comply with **NCQA** (National Committee for Quality Assurance) and **CMS** (Centers for Medicare & Medicaid Services) standards, with native support for **Appian Process Automation** and an **Agent Credentialing Service Subscription API**.
 
+> **Release Status**: ✅ Verified working agent UI code with automated `create_vm.bat` local environment.
+
 ---
 
 ## 🌟 Key Features
